@@ -1,0 +1,19 @@
+
+All these are now implemented! HOWRAYT!:
+
+    highlight/display newly-added row
+    highlight "insert row" button when selected
+    add a dropdown option to select sheet to work with (gen, sef, trust, 20%)
+
+
+
+Prolly need to have these implemented:
+    change db to sql instead of excel
+    add required parameters to input fields
+    select data and then modify its content (prolly need to rewrite/re-conceptualize the whole app, tho)
+
+
+----------------others
+Universality of the UI... pero parang mas ok kung sa excel na mismo un gagawin so, NO.
+
+

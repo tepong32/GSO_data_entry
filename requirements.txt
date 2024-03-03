@@ -1,0 +1,10 @@
+et-xmlfile==1.1.0
+numpy==1.26.4
+openpyxl==3.1.2
+pandas==2.2.1
+pillow==10.2.0
+python-dateutil==2.9.0.post0
+pytz==2024.1
+six==1.16.0
+ttkthemes @ git+https://github.com/RedFantom/ttkthemes@56a7bdcb5c86b88aef637ffd60549efa1bf92839
+tzdata==2024.1
