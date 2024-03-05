@@ -5,9 +5,27 @@ from ttkthemes import ThemedTk
 import openpyxl
 import pandas as pd
 
+
+
+file_path = ""  # Global variable to store the file path
 current_sheet = ""  # Global variable to store the selected sheet name
 widget_name_mapping = {}  # Global variable to store the mapping of widgets
 column_to_widget_mapping = {} 
+
+### this first asks the user which excel file to load
+# def load_excel_file():
+#     global file_path, current_sheet
+#     file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx *.xlsm")])
+#     if file_path:
+#         current_sheet = ""  # Clear the current sheet when loading a new file
+#         load_data(file_path)
+
+### this directly loads the db.xlsx file upon app startup
+def load_excel_file():
+    global current_sheet, file_path
+    file_path = "db.xlsx"  # Directly set the file path to "db.xlsx" in the root folder
+    current_sheet = ""  # Clear the current sheet when loading a new file
+    load_data(file_path)
 
 def load_data(file_path):
     global current_sheet, widget_name_mapping
@@ -37,31 +55,35 @@ def load_data(file_path):
             if idx < 6:
                 widget_name = "widget_" + str(idx)
                 widget_name_mapping[widget_name] = col_name
-                column_to_widget_mapping[col_name] = widget_name
+                column_to_widget_mapping[col_name] = widget_name.lower()  # Create the reverse mapping with lowercase
+                # Update the label for the corresponding widget
+                widgets_frame.grid_slaves(row=0, column=idx)[0].config(text=col_name)
 
-    except Exception as e:
-        print(f"Error loading Excel file: {e}")
+        # Insert the data into the TreeView
+        for value_tuple in list_values[1:]:
+            treeView.insert('', tk.END, values=value_tuple)
 
+        return sheet_names, column_to_widget_mapping  # Return both sheet names list and the reverse mapping
+    
+    except openpyxl.utils.exceptions.InvalidFileException:
+        print("Invalid Excel file. Please select a valid Excel file.")
+
+        
 def on_sheet_select(event):
     global current_sheet
     selected_sheet = sheet_dropdown.get()
     if selected_sheet != current_sheet:
         current_sheet = selected_sheet
-        load_data("db.xlsx")  # Load data for the selected sheet
+        load_data(file_path)  # Update the TreeView when the selected sheet changes
 
-root = tk.Tk()
-root.title("Excel Data Viewer")
+def update_treeview_headings(columns):
+    # Clear previous TreeView columns and headings
+    treeView.delete(*treeView.get_children())
+    treeView["columns"] = columns
 
-# Sheet Combobox
-sheet_var = tk.StringVar()
-sheet_dropdown = ttk.Combobox(root, textvariable=sheet_var, state="readonly")
-sheet_dropdown.grid(row=4, column=5, padx=10, pady=5)
-sheet_dropdown.bind("<<ComboboxSelected>>", on_sheet_select)
-
-# Load initial data
-load_data("db.xlsx")
-
-
+    for col_name in columns:
+        treeView.heading(col_name, text=col_name)
+        treeView.column(col_name, width=100)  # Set a default width for each column (you can adjust it as needed)
 
 def insert_row():
     if not column_to_widget_mapping:
@@ -69,8 +91,8 @@ def insert_row():
     # Retrieve data from the widgets
     r1 = month.get()
     r2 = obr_number.get()
-    r3 = category_dropdown.get()
-    r4 = sub_category.get()
+    r3 = category_combobox.get()
+    r4 = sub_category_combobox.get()
     r5 = brand.get()
     r6 = price.get()
     r7 = notes.get()
@@ -92,26 +114,21 @@ def insert_row():
     last_row_id = treeView.get_children()[-1]
 
     # clear the values after inserting the new row then resetting the values to default
-    r1.delete(0, "end")
-    r2.delete(0, "end")
-    r3.set(status_list[0])
-    r4.delete(0, "end")
-    r5.delete(0, "end")
-    r6.delete(0, "end")
-    r7.delete(0, "end")
+    month.delete(0, "end")
+    obr_number.delete(0, "end")
+    category_combobox.set("Select Category")
+    sub_category_combobox.delete(0, "end")
+    brand.delete(0, "end")
+    price.delete(0, "end")
+    notes.delete(0, "end")
 
     # Highlight or select the last inserted row in the TreeView
     treeView.selection_set(last_row_id)
     # Scroll the TreeView to make sure the last inserted row is visible
     treeView.see(last_row_id)
     
-    # returns the focus to the check_date widget after inserting the new row
-    check_date.focus_set()
-    
-    # Change the style of the "Add" button when it is selected using Tab
-    style.map("Custom.TButton",
-              foreground=[("active", "white"), ("!active", "black")],
-              background=[("active", "blue"), ("!active", "SystemButtonFace")])
+    # returns the focus to the "month" widget after inserting the new row
+    month.focus_set()
 
 
 # Create the main window
@@ -119,7 +136,7 @@ root = ThemedTk(theme="radiance") #tk.Tk()
 root.title('GSO Records App by tEppy™')
 
 # Update labels of widgets based on column headings and get the widget_name_mapping
-# sheet_names = load_data(file_path)  # Get the sheet names list
+sheet_names = load_data(file_path)  # Get the sheet names list
 
 ################## Main Frame ##################
 '''
@@ -236,7 +253,7 @@ category_combobox.grid(row=1, column=2, padx=5, pady=(0, 5), sticky="ew")
 category_combobox.bind("<<ComboboxSelected>>", on_category_selected)
 
 # Subcategory Combobox (initially hidden)
-sub_category_combobox = ttk.Combobox(widgets_frame)
+sub_category_combobox = ttk.Combobox(widgets_frame, state='readonly')
 sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
 
 
@@ -256,8 +273,8 @@ notes = ttk.Entry(widgets_frame, width=25)
 notes.grid(row=1, column=6, padx=5, pady=(0,5), sticky="ew")
 
 # Select File Button
-# btn_load = ttk.Button(widgets_frame, text="Load Excel File", command=load_excel_file, takefocus=0)
-# btn_load.grid(row=0, column=7, padx=5, pady=(0, 5), sticky="ew")
+btn_load = ttk.Button(widgets_frame, text="Load Excel File", command=load_excel_file, takefocus=0)
+btn_load.grid(row=0, column=7, padx=5, pady=(0, 5), sticky="ew")
 
 # Select Sheet Button (Inside Widgets Frame)
 def select_sheet():
@@ -284,9 +301,23 @@ btn_row.grid(row=4, column=3, sticky="nsew")
 ### Display Frame
 treeFrame = ttk.Frame(outer_frame, takefocus=0)
 treeFrame.grid(row=5, column=0, pady=10)
-treeScroll = ttk.Scrollbar(treeFrame)
-treeScroll.pack(side="right", fill="y") # this sets the scrollbar to the right side of the frame,
-                                        # covering its whole height
+
+# Create a canvas inside the frame
+canvas = tk.Canvas(treeFrame)
+canvas.pack(side='left', fill='both', expand=True)
+
+
+# Create vertical scrollbar and associate it with the canvas
+treeScroll = ttk.Scrollbar(treeFrame, orient='vertical', command=canvas.yview)
+treeScroll.pack(side='right', fill='y')
+
+
+# Create horizontal scrollbar and associate it with the canvas
+hScroll = ttk.Scrollbar(treeFrame, orient='horizontal', command=canvas.xview)
+hScroll.pack(side='bottom', fill='x')
+canvas.configure(xscrollcommand=hScroll.set, yscrollcommand=treeScroll.set)
+
+# Add the TreeView to the canvas
 cols = ("Month", "OBR #", "Category","Sub-category", "Brand", "Price", "Notes") # column of the preview related to the excel file
 treeView = ttk.Treeview(treeFrame, show="headings", 
                         yscrollcommand=treeScroll.set, columns=cols, height=15)
@@ -302,6 +333,7 @@ treeView.column("Notes", width=80)
 treeView.pack()
 treeScroll.config(command=treeView.yview) # this line attaches the treeScroll widget to the treeView, scrolling vertically
 
+canvas.create_window((0, 0), window=treeView, anchor='nw')
 
 # Event Listener function highlighting selected items on the treeView list
 def selected():
@@ -309,17 +341,12 @@ def selected():
     
 treeView.bind("<<ListboxSelect>>", lambda x: selected())
 
-# ### switch (dark/light)
-# def toggle_mode():
-#     if mode_switch.instate(["selected"]):
-#         style.theme_use("forest-light")
-#     else:
-#         style.theme_use("forest-dark")
-
-# mode_switch = ttk.Checkbutton(outer_frame, text="Mode", style="Switch",
-#     command=toggle_mode, takefocus=0) # this triggers the toggle_mode function above
-# mode_switch.grid(row=6, column=0, padx=5, pady=10, sticky="nsew")
+# Update the scrollregion after creating the inner frame
+canvas.update_idletasks()
+canvas.configure(scrollregion=canvas.bbox('all'))
 
 month.focus_set()
 
 root.mainloop()
+"""_summary_
+"""

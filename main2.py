@@ -114,26 +114,21 @@ def insert_row():
     last_row_id = treeView.get_children()[-1]
 
     # clear the values after inserting the new row then resetting the values to default
-    r1.delete(0, "end")
-    r2.delete(0, "end")
-    r3.set(status_list[0])
-    r4.delete(0, "end")
-    r5.delete(0, "end")
-    r6.delete(0, "end")
-    r7.delete(0, "end")
+    month.delete(0, "end")
+    obr_number.delete(0, "end")
+    category_combobox.set("Select Category")
+    sub_category_combobox.delete(0, "end")
+    brand.delete(0, "end")
+    price.delete(0, "end")
+    notes.delete(0, "end")
 
     # Highlight or select the last inserted row in the TreeView
     treeView.selection_set(last_row_id)
     # Scroll the TreeView to make sure the last inserted row is visible
     treeView.see(last_row_id)
     
-    # returns the focus to the check_date widget after inserting the new row
-    check_date.focus_set()
-    
-    # Change the style of the "Add" button when it is selected using Tab
-    style.map("Custom.TButton",
-              foreground=[("active", "white"), ("!active", "black")],
-              background=[("active", "blue"), ("!active", "SystemButtonFace")])
+    # returns the focus to the "month" widget after inserting the new row
+    month.focus_set()
 
 
 # Create the main window
@@ -258,7 +253,7 @@ category_combobox.grid(row=1, column=2, padx=5, pady=(0, 5), sticky="ew")
 category_combobox.bind("<<ComboboxSelected>>", on_category_selected)
 
 # Subcategory Combobox (initially hidden)
-sub_category_combobox = ttk.Combobox(widgets_frame)
+sub_category_combobox = ttk.Combobox(widgets_frame, state='readonly')
 sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
 
 
