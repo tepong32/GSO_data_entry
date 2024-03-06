@@ -13,19 +13,20 @@ widget_name_mapping = {}  # Global variable to store the mapping of widgets
 column_to_widget_mapping = {} 
 
 ### this first asks the user which excel file to load
-# def load_excel_file():
-#     global file_path, current_sheet
-#     file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx *.xlsm")])
-#     if file_path:
-#         current_sheet = ""  # Clear the current sheet when loading a new file
-#         load_data(file_path)
-
-### this directly loads the db.xlsx file upon app startup
 def load_excel_file():
-    global current_sheet, file_path
-    file_path = "db.xlsx"  # Directly set the file path to "db.xlsx" in the root folder
-    current_sheet = ""  # Clear the current sheet when loading a new file
-    load_data(file_path)
+    global file_path, current_sheet
+    file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx *.xlsm")])
+    if file_path:
+        current_sheet = ""  # Clear the current sheet when loading a new file
+        load_data(file_path)
+
+### you can use this instead of the above code chunk to directly loads the db.xlsx file upon app startup
+### comment-out the previous and un-comment this chunk
+# def load_excel_file():
+#     global current_sheet, file_path
+#     file_path = "db.xlsx"  # Directly set the file path to "db.xlsx" in the root folder
+#     current_sheet = ""  # Clear the current sheet when loading a new file
+#     load_data(file_path)
 
 def load_data(file_path):
     global current_sheet, widget_name_mapping
@@ -134,6 +135,9 @@ def insert_row():
 # Create the main window
 root = ThemedTk(theme="radiance") #tk.Tk()
 root.title('GSO Records App by tEppy™')
+### this two lines below set the app to fullscreen
+# root.overrideredirect(True)
+# root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
 
 # Update labels of widgets based on column headings and get the widget_name_mapping
 sheet_names = load_data(file_path)  # Get the sheet names list
@@ -147,6 +151,9 @@ sheet_names = load_data(file_path)  # Get the sheet names list
 outer_frame = ttk.Frame(root) # parent widget
 outer_frame.pack()
 
+# Select File Button
+btn_load = ttk.Button(outer_frame, text="Load Records", command=load_excel_file, takefocus=0)
+btn_load.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="e")
 
 ################## Widgets Frame ##################
 ''' 
@@ -155,10 +162,9 @@ outer_frame.pack()
     since they are supposed to be "grouped-together"... except from, of course, the
     widgets_frame for its root will be the outer_frame (see above).
 '''
-
 ### col0, row0 of the root_frame : Enclosure Widget for all other input widgets
 widgets_frame = ttk.LabelFrame(outer_frame, text="Widgets Frame")
-widgets_frame.grid(row=0, column=0, padx=20, pady=10) # padding on x & y axis
+widgets_frame.grid(row=1, column=0, padx=20, pady=10) # padding on x & y axis
 
 w00 = ttk.Label(widgets_frame, )
 w00.grid(row=0, column=0)
@@ -181,6 +187,16 @@ w05.grid(row=0, column=5)
 w06 = ttk.Label(widgets_frame, )
 w06.grid(row=0, column=6)
 
+w07 = ttk.Label(widgets_frame, )
+w07.grid(row=3, column=1)
+w08 = ttk.Label(widgets_frame, )
+w08.grid(row=3, column=2)
+w09 = ttk.Label(widgets_frame, )
+w09.grid(row=3, column=3)
+w10 = ttk.Label(widgets_frame, )
+w10.grid(row=3, column=4)
+w11 = ttk.Label(widgets_frame, text="w11")
+w11.grid(row=3, column=5)
 
 # Read Excel data from a specific sheet (replace 'Sheet1' with your actual sheet name)
 df = pd.read_excel('db.xlsx', sheet_name='Lists(DoNotSelectThis)')
@@ -199,15 +215,15 @@ tables_list = df['List_Tables'].tolist()
 month = ttk.Entry(widgets_frame, width=7)
 # check_date.insert(0, "help text here")
 # check_date.bind("<FocusIn>", lambda e: check_date.delete('0', 'end'))
-month.grid(row=1, column=0, padx=5, pady=(0,5), sticky="ew")
+month.grid(row=2, column=0, padx=5, pady=(0,5), sticky="ew")
 
 obr_number = ttk.Entry(widgets_frame,width=13)
-obr_number.grid(row=1, column=1, padx=5, pady=(0,5), sticky="ew")
+obr_number.grid(row=2, column=1, padx=5, pady=(0,5), sticky="ew")
 
 # category_list = asset_type_list
 # category_dropdown = ttk.Combobox(widgets_frame, values=category_list, state='readonly')
 # category_dropdown.current(0) # default selected value
-# category_dropdown.grid(row=1, column=2, padx=5, pady=(0,5), sticky="ew")
+# category_dropdown.grid(row=2, column=2, padx=5, pady=(0,5), sticky="ew")
 
 def on_category_selected(event):
     selected_category = category_var.get()
@@ -215,46 +231,46 @@ def on_category_selected(event):
         sub_category_combobox['values'] = peripherals_list
         sub_category_combobox.set(peripherals_list[0])  # Set default value
         sub_category_combobox['state'] = 'readonly'
-        sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+        sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
     elif selected_category == "Kitchen-related":
         sub_category_combobox['values'] = kitchen_list
         sub_category_combobox.set(kitchen_list[0])  # Set default value
         sub_category_combobox['state'] = 'readonly'
-        sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+        sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
     elif selected_category == "Table":
         sub_category_combobox['values'] = tables_list
         sub_category_combobox.set(tables_list[0])  # Set default value
         sub_category_combobox['state'] = 'readonly'
-        sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+        sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
     elif selected_category == "Chair":
         sub_category_combobox['values'] = chairs_list
         sub_category_combobox.set(chairs_list[0])  # Set default value
         sub_category_combobox['state'] = 'readonly'
-        sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+        sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
     elif selected_category == "Rack":
         sub_category_combobox['values'] = racks_list
         sub_category_combobox.set(racks_list[0])  # Set default value
         sub_category_combobox['state'] = 'readonly'
-        sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+        sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
     elif selected_category == "Others":
         sub_category_combobox['values'] = others_list
         sub_category_combobox.set(others_list[0])  # Set default value
         sub_category_combobox['state'] = 'readonly'
-        sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+        sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
     else:
         sub_category_combobox['state'] = 'disabled'
-        sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+        sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
 
 # Category Combobox
 category_var = tk.StringVar()
 category_combobox = ttk.Combobox(widgets_frame, textvariable=category_var, values=asset_type_list, state='readonly')
 category_combobox.set("Select Category")
-category_combobox.grid(row=1, column=2, padx=5, pady=(0, 5), sticky="ew")
+category_combobox.grid(row=2, column=2, padx=5, pady=(0, 5), sticky="ew")
 category_combobox.bind("<<ComboboxSelected>>", on_category_selected)
 
 # Subcategory Combobox (initially hidden)
 sub_category_combobox = ttk.Combobox(widgets_frame, state='readonly')
-sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
+sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
 
 
 
@@ -264,17 +280,23 @@ sub_category_combobox.grid(row=1, column=3, padx=5, pady=(0, 5), sticky="ew")
 
 
 brand = ttk.Entry(widgets_frame, width=20)
-brand.grid(row=1, column=4,padx=5, pady=(0,5), sticky="ew")
+brand.grid(row=2, column=4,padx=5, pady=(0,5), sticky="ew")
 
 price = ttk.Entry(widgets_frame, width=15)
-price.grid(row=1, column=5,padx=5, pady=(0,5), sticky="ew")
+price.grid(row=2, column=5,padx=5, pady=(0,5), sticky="ew")
 
 notes = ttk.Entry(widgets_frame, width=25)
-notes.grid(row=1, column=6, padx=5, pady=(0,5), sticky="ew")
+notes.grid(row=2, column=6, padx=5, pady=(0,5), sticky="ew")
 
-# Select File Button
-btn_load = ttk.Button(widgets_frame, text="Load Excel File", command=load_excel_file, takefocus=0)
-btn_load.grid(row=0, column=7, padx=5, pady=(0, 5), sticky="ew")
+
+
+notes = ttk.Entry(widgets_frame, width=25)
+notes.grid(row=3, column=1, padx=5, pady=(0,5), sticky="ew")
+notes = ttk.Entry(widgets_frame, width=25)
+notes.grid(row=3, column=2, padx=5, pady=(0,5), sticky="ew")
+notes = ttk.Entry(widgets_frame, width=25)
+notes.grid(row=3, column=3, padx=5, pady=(0,5), sticky="ew")
+
 
 # Select Sheet Button (Inside Widgets Frame)
 def select_sheet():
@@ -301,23 +323,9 @@ btn_row.grid(row=4, column=3, sticky="nsew")
 ### Display Frame
 treeFrame = ttk.Frame(outer_frame, takefocus=0)
 treeFrame.grid(row=5, column=0, pady=10)
-
-# Create a canvas inside the frame
-canvas = tk.Canvas(treeFrame)
-canvas.pack(side='left', fill='both', expand=True)
-
-
-# Create vertical scrollbar and associate it with the canvas
-treeScroll = ttk.Scrollbar(treeFrame, orient='vertical', command=canvas.yview)
-treeScroll.pack(side='right', fill='y')
-
-
-# Create horizontal scrollbar and associate it with the canvas
-hScroll = ttk.Scrollbar(treeFrame, orient='horizontal', command=canvas.xview)
-hScroll.pack(side='bottom', fill='x')
-canvas.configure(xscrollcommand=hScroll.set, yscrollcommand=treeScroll.set)
-
-# Add the TreeView to the canvas
+treeScroll = ttk.Scrollbar(treeFrame)
+treeScroll.pack(side="right", fill="y") # this sets the scrollbar to the right side of the frame,
+                                        # covering its whole height
 cols = ("Month", "OBR #", "Category","Sub-category", "Brand", "Price", "Notes") # column of the preview related to the excel file
 treeView = ttk.Treeview(treeFrame, show="headings", 
                         yscrollcommand=treeScroll.set, columns=cols, height=15)
@@ -333,7 +341,6 @@ treeView.column("Notes", width=80)
 treeView.pack()
 treeScroll.config(command=treeView.yview) # this line attaches the treeScroll widget to the treeView, scrolling vertically
 
-canvas.create_window((0, 0), window=treeView, anchor='nw')
 
 # Event Listener function highlighting selected items on the treeView list
 def selected():
@@ -341,9 +348,16 @@ def selected():
     
 treeView.bind("<<ListboxSelect>>", lambda x: selected())
 
-# Update the scrollregion after creating the inner frame
-canvas.update_idletasks()
-canvas.configure(scrollregion=canvas.bbox('all'))
+# ### switch (dark/light)
+# def toggle_mode():
+#     if mode_switch.instate(["selected"]):
+#         style.theme_use("forest-light")
+#     else:
+#         style.theme_use("forest-dark")
+
+# mode_switch = ttk.Checkbutton(outer_frame, text="Mode", style="Switch",
+#     command=toggle_mode, takefocus=0) # this triggers the toggle_mode function above
+# mode_switch.grid(row=6, column=0, padx=5, pady=10, sticky="nsew")
 
 month.focus_set()
 
