@@ -1,0 +1,15 @@
+
+
+change code to auto-load db.xlsx file on startup
+add sheet button with naming capability
+(x) select sheet from excel file
+(x) row insertions
+
+qty, dept, still useful or not, other references
+
+automatic full screen display dynamically covering the size of the screen and providing hscroll if needed
+
+
+
+work on making the widgets_frame only a two-column frame
+hscroll on treeframe still needed

@@ -1,11 +1,20 @@
-import tkinter as tk
-from tkinter import ttk
+### from tutorial to actual app build
+
+from tkinter import *
 from tkinter import filedialog
+from tkinter import ttk
 from ttkthemes import ThemedTk
 import openpyxl
 import pandas as pd
 
 
+root = ThemedTk(theme="radiance")
+root.title("App by tEppy™")
+# root.geometry("1200x800")  # Initial window size
+# # root.resizable(width=False, height=False) # fixed-size app window
+root.resizable(0, 0)
+
+##### defining functions #####
 
 file_path = ""  # Global variable to store the file path
 current_sheet = ""  # Global variable to store the selected sheet name
@@ -62,7 +71,7 @@ def load_data(file_path):
 
         # Insert the data into the TreeView
         for value_tuple in list_values[1:]:
-            treeView.insert('', tk.END, values=value_tuple)
+            treeView.insert('', END, values=value_tuple)
 
         return sheet_names, column_to_widget_mapping  # Return both sheet names list and the reverse mapping
     
@@ -131,29 +140,16 @@ def insert_row():
     # returns the focus to the "month" widget after inserting the new row
     month.focus_set()
 
+outer_frame = ttk.Frame(root)
+widgets_frame = ttk.Frame(outer_frame, borderwidth=5, relief="raised") # change height later.
+pack_frame = ttk.Frame(outer_frame, borderwidth=5, relief="flat")
+exit_button = ttk.Button(outer_frame, text="Exit", command=quit, takefocus=0)
 
-# Create the main window
-root = ThemedTk(theme="radiance") #tk.Tk()
-root.title('GSO Records App by tEppy™')
-### this two lines below set the app to fullscreen
-# root.overrideredirect(True)
-# root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
 
-# Update labels of widgets based on column headings and get the widget_name_mapping
-sheet_names = load_data(file_path)  # Get the sheet names list
-
-################## Main Frame ##################
-'''
-    outer_frame.pack() makes the app responsive.
-    Since this is the main widget, adjusting the size of the UI/app will keep
-    the components centered
-'''
-outer_frame = ttk.Frame(root) # parent widget
-outer_frame.pack()
 
 # Select File Button
 btn_load = ttk.Button(outer_frame, text="Load Records", command=load_excel_file, takefocus=0)
-btn_load.grid(row=0, column=0, padx=5, pady=(0, 5), sticky="e")
+
 
 ################## Widgets Frame ##################
 ''' 
@@ -262,7 +258,7 @@ def on_category_selected(event):
         sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
 
 # Category Combobox
-category_var = tk.StringVar()
+category_var = StringVar()
 category_combobox = ttk.Combobox(widgets_frame, textvariable=category_var, values=asset_type_list, state='readonly')
 category_combobox.set("Select Category")
 category_combobox.grid(row=2, column=2, padx=5, pady=(0, 5), sticky="ew")
@@ -319,7 +315,6 @@ btn_row.grid(row=4, column=3, sticky="nsew")
 
 ### Display Frame
 treeFrame = ttk.Frame(outer_frame, takefocus=0)
-treeFrame.grid(row=5, column=0, pady=10)
 treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side="right", fill="y") # this sets the scrollbar to the right side of the frame,
                                         # covering its whole height
@@ -358,8 +353,58 @@ treeView.bind("<<ListboxSelect>>", lambda x: selected())
 
 month.focus_set()
 
-cancel = ttk.Button(outer_frame, text="Exit", command=quit, takefocus=0).grid(column=0, row=6, sticky="e")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################## these lines can be used to set vars to "still useful?" and "returned?". Do not remove these.
+onevar = BooleanVar(value=True) 
+twovar = BooleanVar(value=False)
+threevar = BooleanVar(value=True)
+
+one = ttk.Checkbutton(widgets_frame, text="One", variable=onevar, onvalue=True)
+two = ttk.Checkbutton(widgets_frame, text="Two", variable=twovar, onvalue=True)
+three = ttk.Checkbutton(widgets_frame, text="Three", variable=threevar, onvalue=True)
+ok = ttk.Button(widgets_frame, text="Okay")
+
+
+
+
+
+
+
+
+
+# Widget placements (grid for the root frame)
+outer_frame.grid(row=0, column=0) # main
+widgets_frame.grid(row=0, column=0) # 1st frame spanning 3colsx10rows
+treeFrame.grid(row=0, column=2, pady=10)
+btn_load.grid(row=0, column=4, padx=5, pady=(0, 5), sticky="e")
+exit_button.grid(column=4, row=3, sticky="e")
+
+
+
+one.grid(column=0, row=3)
+two.grid(column=1, row=3)
+three.grid(column=2, row=3)
+ok.grid(column=3, row=3)
+
+
+
+
 
 root.mainloop()
-"""_summary_
-"""
