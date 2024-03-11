@@ -13,3 +13,6 @@ automatic full screen display dynamically covering the size of the screen and pr
 
 work on making the widgets_frame only a two-column frame
 hscroll on treeframe still needed
+rename tables and chairs to furnnitures then work on corresponding list-dependent dropdowns
+sub-category moving to col2, row2 whenever a category is chosen. I wonder why. 
+needs to have a delete function thru the treeView widget

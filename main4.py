@@ -67,7 +67,7 @@ def load_data(file_path):
                 widget_name_mapping[widget_name] = col_name
                 column_to_widget_mapping[col_name] = widget_name.lower()  # Create the reverse mapping with lowercase
                 # Update the label for the corresponding widget
-                widgets_frame.grid_slaves(row=0, column=idx)[0].config(text=col_name)
+                widgets_frame.grid_slaves(column=0, row=idx)[0].config(text=col_name)
 
         # Insert the data into the TreeView
         for value_tuple in list_values[1:]:
@@ -118,7 +118,7 @@ def insert_row():
     workbook.save(path)
 
     # displaying the inserted row on the UI (treeView)
-    treeView.insert('', tk.END, values=row_values)
+    treeView.insert('', END, values=row_values)
     
     # Get the ID of the last inserted row in the TreeView
     last_row_id = treeView.get_children()[-1]
@@ -142,13 +142,6 @@ def insert_row():
 
 outer_frame = ttk.Frame(root)
 widgets_frame = ttk.Frame(outer_frame, borderwidth=5, relief="raised") # change height later.
-pack_frame = ttk.Frame(outer_frame, borderwidth=5, relief="flat")
-exit_button = ttk.Button(outer_frame, text="Exit", command=quit, takefocus=0)
-
-
-
-# Select File Button
-btn_load = ttk.Button(outer_frame, text="Load Records", command=load_excel_file, takefocus=0)
 
 
 ################## Widgets Frame ##################
@@ -163,36 +156,36 @@ widgets_frame = ttk.LabelFrame(outer_frame, text="Widgets Frame")
 widgets_frame.grid(row=1, column=0, padx=20, pady=10) # padding on x & y axis
 
 w00 = ttk.Label(widgets_frame, )
-w00.grid(row=0, column=0)
+w00.grid(column=0, row=0, )
 
 w01 = ttk.Label(widgets_frame, )
-w01.grid(row=0, column=1)
+w01.grid(column=0, row=1, )
 
 w02 = ttk.Label(widgets_frame, )
-w02.grid(row=0, column=2)
+w02.grid(column=0, row=2, )
 
 w03 = ttk.Label(widgets_frame, )
-w03.grid(row=0, column=3)
+w03.grid(column=0, row=3, )
 
 w04 = ttk.Label(widgets_frame, )
-w04.grid(row=0, column=4)
+w04.grid(column=0, row=4, )
 
 w05 = ttk.Label(widgets_frame, )
-w05.grid(row=0, column=5)
+w05.grid(column=0, row=5, )
 
 w06 = ttk.Label(widgets_frame, )
-w06.grid(row=0, column=6)
+w06.grid(column=0, row=6, )
 
 w07 = ttk.Label(widgets_frame, text="Qty")
-w07.grid(row=3, column=1)
+w07.grid(column=0, row=7, )
 w08 = ttk.Label(widgets_frame, text="Office")
-w08.grid(row=3, column=2)
+w08.grid(column=0, row=8, )
 w09 = ttk.Label(widgets_frame, text="w9")
-w09.grid(row=3, column=3)
+w09.grid(column=0, row=9, )
 w10 = ttk.Label(widgets_frame, text="w10")
-w10.grid(row=3, column=4)
+w10.grid(column=0, row=10, )
 w11 = ttk.Label(widgets_frame, text="w11")
-w11.grid(row=3, column=5)
+w11.grid(column=0, row=11, )
 
 # Read Excel data from a specific sheet (replace 'Sheet1' with your actual sheet name)
 df = pd.read_excel('db.xlsx', sheet_name='Lists(DoNotSelectThis)')
@@ -211,10 +204,10 @@ tables_list = df['List_Tables'].tolist()
 month = ttk.Entry(widgets_frame, width=7)
 # check_date.insert(0, "help text here")
 # check_date.bind("<FocusIn>", lambda e: check_date.delete('0', 'end'))
-month.grid(row=2, column=0, padx=5, pady=(0,5), sticky="ew")
+month.grid(column=1, row=0, padx=5, pady=(0,5), sticky="ew")
 
 obr_number = ttk.Entry(widgets_frame,width=13)
-obr_number.grid(row=2, column=1, padx=5, pady=(0,5), sticky="ew")
+obr_number.grid(column=1, row=1, padx=5, pady=(0,5), sticky="ew")
 
 # category_list = asset_type_list
 # category_dropdown = ttk.Combobox(widgets_frame, values=category_list, state='readonly')
@@ -261,34 +254,28 @@ def on_category_selected(event):
 category_var = StringVar()
 category_combobox = ttk.Combobox(widgets_frame, textvariable=category_var, values=asset_type_list, state='readonly')
 category_combobox.set("Select Category")
-category_combobox.grid(row=2, column=2, padx=5, pady=(0, 5), sticky="ew")
+category_combobox.grid(column=1, row=2, padx=5, pady=(0,5), sticky="ew")
 category_combobox.bind("<<ComboboxSelected>>", on_category_selected)
 
 # Subcategory Combobox (initially hidden)
 sub_category_combobox = ttk.Combobox(widgets_frame, state='readonly')
-sub_category_combobox.grid(row=2, column=3, padx=5, pady=(0, 5), sticky="ew")
-
-
-
-
+sub_category_combobox.grid(column=1, row=3, padx=5, pady=(0,5), sticky="ew")
 
 brand = ttk.Entry(widgets_frame, width=20)
-brand.grid(row=2, column=4,padx=5, pady=(0,5), sticky="ew")
+brand.grid(column=1, row=4, padx=5, pady=(0,5), sticky="ew")
 
 price = ttk.Entry(widgets_frame, width=15)
-price.grid(row=2, column=5,padx=5, pady=(0,5), sticky="ew")
+price.grid(column=1, row=5, padx=5, pady=(0,5), sticky="ew")
 
 notes = ttk.Entry(widgets_frame, width=25)
-notes.grid(row=2, column=6, padx=5, pady=(0,5), sticky="ew")
-
-
+notes.grid(column=1, row=6, padx=5, pady=(0,5), sticky="ew")
 
 qty = ttk.Entry(widgets_frame, width=25)
-qty.grid(row=4, column=1, padx=5, pady=(0,5), sticky="ew")
+qty.grid(column=1, row=7, padx=5, pady=(0,5), sticky="ew")
 office = ttk.Entry(widgets_frame, width=25)
-office.grid(row=4, column=2, padx=5, pady=(0,5), sticky="ew")
+office.grid(column=1, row=8, padx=5, pady=(0,5), sticky="ew")
 w9_entry = ttk.Entry(widgets_frame, width=25)
-w9_entry.grid(row=4, column=3, padx=5, pady=(0,5), sticky="ew")
+w9_entry.grid(column=1, row=9, padx=5, pady=(0,5), sticky="ew")
 
 
 # Select Sheet Button (Inside Widgets Frame)
@@ -301,20 +288,20 @@ def select_sheet():
 
 # Dropdown menu for selecting sheets
 sheet_dropdown = ttk.Combobox(widgets_frame, state="readonly")
-sheet_dropdown.grid(row=4, column=5, padx=10, pady=5)
+sheet_dropdown.grid(column=1, row=10, padx=5, pady=(0,5), sticky="ew")
 sheet_dropdown.bind("<<ComboboxSelected>>", on_sheet_select)
 
 # Insert Row button (Inside Widgets Frame)
 btn_row = ttk.Button(widgets_frame, text="Insert", command=lambda: insert_row(),
                     takefocus=1)
-btn_row.grid(row=4, column=3, sticky="nsew")
+btn_row.grid(column=2, row=11, padx=5, pady=(0,5), sticky="ew")
 
 
 ################## TreeView / Excel LabelFrame ####################################
 ### This is where the preview of the excel file's data will be displayed
 
 ### Display Frame
-treeFrame = ttk.Frame(outer_frame, takefocus=0)
+treeFrame = ttk.Frame(outer_frame, borderwidth=5, relief="flat", takefocus=0)
 treeScroll = ttk.Scrollbar(treeFrame)
 treeScroll.pack(side="right", fill="y") # this sets the scrollbar to the right side of the frame,
                                         # covering its whole height
@@ -323,13 +310,13 @@ treeView = ttk.Treeview(treeFrame, show="headings",
                         yscrollcommand=treeScroll.set, columns=cols, height=15)
 # these set the width of the columns specifically
 # COLUMN NAMES SHOULD MATCH THOSE INDICATED ON THE EXCEL FILE
-treeView.column("Month", width=100)
-treeView.column("OBR #", width=100)
-treeView.column("Category", width=100)
-treeView.column("Sub-category", width=200)
-treeView.column("Brand", width=100)
-treeView.column("Price", width=100)
-treeView.column("Notes", width=80)
+treeView.column("Month", width=60)
+treeView.column("OBR #", width=60)
+treeView.column("Category", width=60)
+treeView.column("Sub-category", width=60)
+treeView.column("Brand", width=60)
+treeView.column("Price", width=60)
+treeView.column("Notes", width=100)
 treeView.pack()
 treeScroll.config(command=treeView.yview) # this line attaches the treeScroll widget to the treeView, scrolling vertically
 
@@ -355,19 +342,17 @@ month.focus_set()
 
 
 
+# Widget placements (grid for the root frame)
+outer_frame.grid(column=0, row=0) # main
+widgets_frame.grid(column=0, row=0) # 1st frame spanning 3colsx10rows
+treeFrame.grid(column=1, row=0, pady=10)
 
+# Select File Button
+btn_load = ttk.Button(outer_frame, text="Load Records", command=load_excel_file, takefocus=0)
+btn_load.grid(column=1, row=2, padx=5, pady=(0, 5), sticky="w")
 
-
-
-
-
-
-
-
-
-
-
-
+exit_button = ttk.Button(outer_frame, text="Exit", command=quit, takefocus=0)
+exit_button.grid(column=1, row=3, padx=5, pady=(0, 5), sticky="w")
 
 
 
@@ -379,29 +364,12 @@ threevar = BooleanVar(value=True)
 one = ttk.Checkbutton(widgets_frame, text="One", variable=onevar, onvalue=True)
 two = ttk.Checkbutton(widgets_frame, text="Two", variable=twovar, onvalue=True)
 three = ttk.Checkbutton(widgets_frame, text="Three", variable=threevar, onvalue=True)
-ok = ttk.Button(widgets_frame, text="Okay")
+# ok = ttk.Button(widgets_frame, text="Okay")
 
-
-
-
-
-
-
-
-
-# Widget placements (grid for the root frame)
-outer_frame.grid(row=0, column=0) # main
-widgets_frame.grid(row=0, column=0) # 1st frame spanning 3colsx10rows
-treeFrame.grid(row=0, column=2, pady=10)
-btn_load.grid(row=0, column=4, padx=5, pady=(0, 5), sticky="e")
-exit_button.grid(column=4, row=3, sticky="e")
-
-
-
-one.grid(column=0, row=3)
-two.grid(column=1, row=3)
-three.grid(column=2, row=3)
-ok.grid(column=3, row=3)
+one.grid(column=0, row=12)
+two.grid(column=1, row=12)
+three.grid(column=2, row=12)
+# ok.grid(column=2, row=13)
 
 
 
